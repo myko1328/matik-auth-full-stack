@@ -17,14 +17,14 @@ exports.getUsers = async (req, res) => {
 };
 
 exports.register = async (req, res) => {
-	const { email, password } = req.body;
+	const { email, password, business_name } = req.body;
 	try {
 		const hashedPassword = await hash(password, 10);
 
-		await db.query('insert into users(email,password) values ($1 , $2)', [
-			email,
-			hashedPassword,
-		]);
+		await db.query(
+			'insert into users(email,password,business_name) values ($1 , $2, $3)',
+			[email, hashedPassword, business_name]
+		);
 
 		return res.status(201).json({
 			success: true,
