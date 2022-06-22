@@ -1,5 +1,11 @@
 const { Router } = require('express');
-const { addEmployee } = require('../controllers/employee');
+const {
+	addEmployee,
+	viewEmployee,
+	viewEmployees,
+	protected,
+} = require('../controllers/employee');
+
 const { userAuth } = require('../middlewares/auth-middleware');
 const {
 	validationMiddleware,
@@ -10,10 +16,14 @@ const router = Router();
 
 router.post(
 	'/addEmployee',
+	protected,
+	userAuth,
 	employeeValidation,
 	validationMiddleware,
-	userAuth,
 	addEmployee
 );
+
+router.get('/viewEmployee/:id', protected, userAuth, viewEmployee);
+router.get('/viewEmployees', protected, userAuth, viewEmployees);
 
 module.exports = router;

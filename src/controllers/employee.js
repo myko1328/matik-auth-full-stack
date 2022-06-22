@@ -1,13 +1,30 @@
-// @route   POST api/employees
-// @desc    Add employees
-
 const db = require('../db');
 
+// @route   GET api/employees
+// @desc    View employees
+// @access  Private
+exports.viewEmployees = async (req, res) => {
+	try {
+		const row = await db.query(`SELECT * from employees`);
+		console.log(row);
+		return res.status(201).json({
+			success: true,
+			message: '',
+			employees: row.rows,
+		});
+	} catch (error) {
+		console.log(error.message);
+		return res.status(500).json({
+			error: error.message,
+		});
+	}
+};
+
+// @route   POST api/employees
+// @desc    Add employees
 // @access  Private
 exports.addEmployee = async (req, res) => {
-	// const { email, password, business_name } = req.body;
 	const {
-		// user_id,
 		emp_first_name,
 		emp_last_name,
 		emp_age,
@@ -15,6 +32,7 @@ exports.addEmployee = async (req, res) => {
 		emp_date_hired,
 		emp_current_rate,
 	} = req.body;
+
 	try {
 		await db.query(
 			`insert into employees (
@@ -47,5 +65,37 @@ exports.addEmployee = async (req, res) => {
 		return res.status(500).json({
 			error: error.message,
 		});
+	}
+};
+
+// @route   GET api/employees
+// @desc    View employee
+// @access  Private
+exports.viewEmployee = async (req, res) => {
+	try {
+		const row = await db.query(`SELECT * from employees WHERE emp_id = $1;`, [
+			req.params.id,
+		]);
+
+		return res.status(201).json({
+			success: true,
+			message: '',
+			employee: row?.rows,
+		});
+	} catch (error) {
+		console.log(error.message);
+		return res.status(500).json({
+			error: error.message,
+		});
+	}
+};
+
+exports.protected = async (req, res) => {
+	try {
+		return res.status(200).json({
+			info: 'protected info',
+		});
+	} catch (error) {
+		console.log(error.message);
 	}
 };
